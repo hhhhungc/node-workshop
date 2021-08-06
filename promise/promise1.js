@@ -15,11 +15,11 @@ let doWork = function (job, timer, isOK) {
         setTimeout(() => {
             let dt = new Date();
             if (isOK) {
-                // 成功
+                // 當這個非同步工作成功，呼叫 resolve 並且把結果傳出去
                 // cb(null, `完成工作: ${job} at ${dt.toISOString()}`);
                 reslove(`完成工作: ${job} at ${dt.toISOString()}`);
             } else {
-                // 失敗
+                // 當這個非同步工作失敗，呼叫 reject 把失敗原因傳出去
                 reject(`出問題了: ${job}`);
             }
         }, timer);
@@ -29,22 +29,21 @@ let doWork = function (job, timer, isOK) {
 let dt = new Date();
 console.log(`開始工作 at ${dt.toISOString()}`);
 // 刷牙 -> 吃早餐 -> 寫功課
-
-// 解決：接續做的工作
-// ---> 動作如果接續著做，只能把下一個動作放在上一個動作的callback
-//   ---> callback hell
+// doWork回傳的是 ==> promise物件
+// 用then() 來接收"然後"的結果
 
 let job1 = doWork("刷牙", 3000, true);
-console.log(job1);
+// console.log(job1); // =>pending
 job1.then(
     function (resolve) {
+        // 接收成功的回覆
         console.log("第一個函式被呼叫了", resolve);
     },
     function (reject) {
-        console.log("第二個函式被呼叫了", reject);
+        // 接收失敗的回覆
+        console.log("第一個函式被呼叫了", reject);
     }
 );
-
 
 // 原本的callback hell
 // doWork("刷牙", 3000, function (err, data) {
@@ -54,7 +53,6 @@ job1.then(
 //         return;
 //     }
 //     console.log(data);
-
 //     doWork("吃早餐", 5000, function (err, data) {
 //         // 已經吃完早餐
 //         if (err) {
@@ -62,7 +60,6 @@ job1.then(
 //             return;
 //         }
 //         console.log(data);
-
 //         doWork("寫功課", 3000, function (err, data) {
 //             if (err) {
 //                 console.log("發生錯誤了:", err);
