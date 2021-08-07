@@ -24,13 +24,33 @@ console.log(`開始工作 at ${dt.toISOString()}`);
 // await 等到後面那個promise物件的狀態變成fulfilled
 // await 一定要在async裡面用
 
-async function oneDay(){
-    let job1=await doWork("刷牙", 3000, true);
-    console.log(job1);
-    let job2=await doWork("吃早餐", 3000, true)
-    console.log(job2);
-    let job3=await doWork("睡午覺", 3000, true)
-    console.log(job3);
+async function oneDay() {
+    // let job1=await doWork("刷牙", 3000, true);
+    // console.log(job1);
+    // let job2=await doWork("吃早餐", 3000, true)
+    // console.log(job2);
+    // let job3=await doWork("睡午覺", 3000, true)
+    // console.log(job3);
+
+    // 需要自己用try / catch來處理錯誤
+    try {
+        let job1 = await doWork("刷牙", 3000, true);
+        console.log(job1);
+    } catch (err) {
+        console.log(err);
+    }
+    try {
+        let job2 = await doWork("吃早餐", 3000, false);
+        console.log(job2);
+    } catch (err) {
+        console.log(err);
+    }
+    try {
+        let job3 = await doWork("睡午覺", 3000, true);
+        console.log(job3);
+    } catch (err) {
+        console.log(err);
+    }
 }
 oneDay();
 
