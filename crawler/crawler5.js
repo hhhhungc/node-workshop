@@ -3,13 +3,13 @@
 
 const axios = require("axios");
 const moment = require("moment");
-// const fs = require("fs");
 const fs = require("fs/promises");
 // const mysql = require("mysql");
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise");
 
 require("dotenv").config();
 
+// 去證交所抓資料
 function getResponse(stockCode) {
     return axios.get("https://www.twse.com.tw/exchangeReport/STOCK_DAY", {
         params: {
@@ -20,6 +20,25 @@ function getResponse(stockCode) {
     });
 }
 
+// 讓抓回來的資料符合資料庫型態
+function gatData(stockData, stockCode) {
+    // 使用forEach
+    // let parseddata = stockData.data.forEach((item) => {
+    //     item[0] = parseInt(item[0].split("/").join(''))+19110000;
+    //     console.log(item[0]);
+    // });
+
+    let parseddata = stockData.data.map((item) => {
+        item = item.map((value) => {
+            return value.replace(/,/g, "");
+        });
+        item[0] = parseInt(item[0].replace(/\//g, "")) + 19110000;
+        item.unshift(stockCode);
+        return item;
+    });
+    return parseddata;
+}
+
 async function stockDay() {
     const pool = mysql.createPool({
         host: process.env.DB_HOST,
@@ -28,7 +47,7 @@ async function stockDay() {
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
     });
-    const promisePool = pool.promise();
+    // const promisePool = pool.promise();
 
     try {
         // 1. 讀 stock.txt 把股票代碼讀進來
@@ -36,12 +55,10 @@ async function stockDay() {
         // console.log("stockCode :", stockCode);
 
         // 2. 去資料庫的 stock 表格查看看，這個代碼是不是在我們的服務範圍內
-        let [rows] = await promisePool.query(
-            "SELECT * FROM stock WHERE stock_id =?",
-            [stockCode]
-        );
+        let [rows] = await pool.query("SELECT * FROM stock WHERE stock_id =?", [
+            stockCode,
+        ]);
         // console.log("資料庫連線成功", rows);
-
         if (rows.length === 0) {
             throw "此筆股票資料不在資料庫裡!";
         }
@@ -52,19 +69,11 @@ async function stockDay() {
         if (stockData.stat !== "OK") {
             console.log("證交所資料有問題");
         }
-        let parseddata = stockData.data.map((item) => {
-            item = item.map((value) => {
-                return value.replace(/,/g, "");
-            });
-
-            item[0] = parseInt(item[0].replace(/\//g, "")) + 19110000;
-            item.unshift(stockCode);
-            return item;
-        });
+        let parseddata = gatData(stockData, stockCode);
         // console.log(parseddata);
 
         // 4. 抓回來的資料存到資料庫的 stock_price 表格裡去
-        let [insertResult] = await promisePool.query(
+        let [insertResult] = await pool.query(
             "INSERT IGNORE INTO stock_price (stock_id, date, volume, amount, open_price, high_price, low_price, close_price, delta_price, transactions) VALUE ?",
             [parseddata]
         );
@@ -74,7 +83,6 @@ async function stockDay() {
         console.log(error);
     } finally {
         // 不關閉連線，認為程式一直在執行
-        // connection.end();
         pool.end();
     }
 }
