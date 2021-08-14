@@ -14,7 +14,7 @@ function getColor() {
 function getPrice() {
     return price*0.9;
 }
-function getOwner(name) {
+function setOwner(name) {
     return `${name}`;
 }
 
@@ -24,21 +24,21 @@ function getOwner(name) {
 // exports.getBrand = getBrand;
 // exports.getColor = getColor;
 // exports.getPrice = getPrice;
-// exports.getOwner = getOwner;
+// exports.setOwner = setOwner;
 
 // 如果這樣定義，在index執行時，只會得到空物件{}
 // exports = {
 //     getBrand: getBrand,
 //     getColor: getColor,
 //     getPrice: getPrice,
-//     getOwner: getOwner,
+//     setOwner: setOwner,
 // };
 
 module.exports = {
     getBrand,
     getColor,
     getPrice,
-    getOwner,
+    setOwner,
 }
 
 // JS幫我們回傳的是module.exports
