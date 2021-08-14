@@ -34,10 +34,10 @@ function double(i) {
     for (let i = 0; i < data1.length; i++) {
         data1[i] = await double(data1[i]);
     }
-    console.log("test1: ", data1);
+    // console.log("test1: ", data1);
 })();
 
-test1: [2, 6, 10, 14];
+// test1: [2, 6, 10, 14];
 
 // 測試2 map --------------------
 let data2 = [1, 3, 5, 7];
@@ -45,7 +45,7 @@ data2 = data2.map(async (d) => {
     let result = await double(d);
     return result;
 });
-console.log("test2: ", data2);
+// console.log("test2: ", data2);
 
 // test2:  [
 //     Promise { <pending> },
@@ -59,5 +59,30 @@ let data3 = [1, 3, 5, 7];
 data3.forEach(async (d, i) => {
     data3[i] = await double(d);
 });
-console.log("test3: ", data3);
+// console.log("test3: ", data3);
 //test3:  [ 1, 3, 5, 7 ]
+
+// test
+// 倒數第二題
+let car1 = {
+    brand: "ford",
+    color: "red",
+    owner: "Paul",
+};
+
+let car2 = car1;
+car2.owner = "Jack";
+
+console.log("倒數第二題: " + car1.owner);
+
+// 最後ㄧ題
+let car3 = {
+    brand: "ford",
+    color: "red",
+    owner: "Paul",
+};
+
+let car4 = car3;
+car4 = { owner: "Jack" };
+
+console.log("最後ㄧ題: " + car3.owner);
