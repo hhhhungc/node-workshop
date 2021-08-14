@@ -1,6 +1,10 @@
 const axios = require("axios");
 const moment = require("moment");
 const fs = require("fs");
+// 兩種引用方式都可以
+// const { readFile } = require("fs");
+// readFile ("stock.txt", "utf8",callback)
+
 const mysql = require("mysql");
 require("dotenv").config(); // 直接 require
 
