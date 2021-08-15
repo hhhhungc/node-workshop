@@ -1,35 +1,56 @@
-const { response } = require("express");
+const { res } = require("express");
 const express = require("express");
+const connection = require("./utils/db");
 
 // 利用 express 建立一個 express application
 let app = express();
 
-// app.use(handler) 使用中間件 middle
-app.use((requset, response, next) => {
+// 處理 cors 問題
+const cors = require("cors");
+app.use(cors());
+
+// app.use(handler) 使用中間件 middleware
+app.use('/about',(req, res, next) => {
     let current = new Date();
-    console.log(`第一個中間件來惹 ${current.toISOString()}`);
+    console.log(`有人來訪惹 ${current.toISOString()}`);
     next();
 });
 
-app.use((requset, response, next) => {
-    console.log("第二個中間件^_^");
+// HTTP Method: get, post, put, patch, delete...
+app.get("/", function (req, res, next) {
+    res.send("<h1>Have a good day! Hello!</h1>");
+});
+
+app.get("/about", function (req, res, next) {
+    res.send("About us ---A");
+});
+
+app.use((req, res, next) => {
+    console.log("到stock中間件^_^ ", req.originalUrl);
     next();
 });
 
-// HTTP Method: get, post, put, patch, delete
-app.get("/", function (request, response, next) {
-    response.send("<h1>Have a good day! Hello!</h1>");
+app.get("/stock", async function (req, res, next) {
+    let result = await connection.queryAsync("SELECT * FROM stock");
+    res.json(result);
 });
 
-// 遇到response就結束，由上往下，放兩個只會出現上面那個
-// 再建一個頁面
-app.get("/about", function (request, response, next) {
-    response.send("About us ---A");
-});
-app.get("/about", function (request, response, next) {
-    response.send("About us ---B");
+app.get("/stock/:stockCode", async (req, res, next) => {
+    let result = await connection.queryAsync(
+        "SELECT * FROM stock_price WHERE stock_id=?",
+        [req.params.stockCode]
+    );
+    res.json(result);
 });
 
-app.listen(3000, function () {
+
+// 錯誤的要放在最下面
+app.use((req, res, next) => {
+    // res.status(404).send("error message");
+    res.status(404).json({ message: "NOT FOUND" });
+});
+
+app.listen(3000, async function () {
+    // await connection.connectAsync();
     console.log("我的web server建立好囉～");
 });
