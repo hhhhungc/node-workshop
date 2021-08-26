@@ -1,4 +1,5 @@
 const { res } = require("express");
+const cors = require("cors");
 const express = require("express");
 const connection = require("./utils/db");
 
@@ -6,7 +7,6 @@ const connection = require("./utils/db");
 let app = express();
 
 // 處理 cors 問題
-const cors = require("cors");
 app.use(cors());
 
 // app.use(handler) 使用中間件 middleware
@@ -50,7 +50,7 @@ app.use((req, res, next) => {
     res.status(404).json({ message: "NOT FOUND" });
 });
 
-app.listen(3000, async function () {
+app.listen(3001, async function () {
     // await connection.connectAsync();
     console.log("我的web server建立好囉～");
 });
