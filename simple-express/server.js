@@ -10,7 +10,7 @@ let app = express();
 app.use(cors());
 
 // app.use(handler) 使用中間件 middleware
-app.use('/about',(req, res, next) => {
+app.use("/about", (req, res, next) => {
     let current = new Date();
     console.log(`有人來訪惹 ${current.toISOString()}`);
     next();
@@ -37,12 +37,11 @@ app.get("/stock", async function (req, res, next) {
 
 app.get("/stock/:stockCode", async (req, res, next) => {
     let result = await connection.queryAsync(
-        "SELECT * FROM stock_price WHERE stock_id=?",
+        "SELECT * FROM stock_price WHERE stock_id=? ORDER BY date DESC",
         [req.params.stockCode]
     );
     res.json(result);
 });
-
 
 // 錯誤的要放在最下面
 app.use((req, res, next) => {

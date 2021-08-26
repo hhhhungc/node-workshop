@@ -9,6 +9,7 @@ let connection = mysql.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     connectionLimit: process.env.DB_CONNECTION_LIMIT || 5,
+    dateStrings: true,
 });
 
 // let connection = mysql.createConnection({
@@ -18,7 +19,6 @@ let connection = mysql.createPool({
 //     password: process.env.DB_PASSWORD,
 //     database: process.env.DB_NAME,
 // });
-
 
 connection = Promise.promisifyAll(connection);
 module.exports = connection;

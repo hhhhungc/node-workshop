@@ -1,12 +1,14 @@
-import React from 'react'
+import React from "react";
 
 function Home() {
-  return (
-    <>
-      <h1>Home</h1>
-      可以查到股票資料
-    </>
-  )
+    return (
+        <>
+            <div className="container">
+                <h1>Home</h1>
+                可以查到股票資料
+            </div>
+        </>
+    );
 }
 
-export default Home
+export default Home;
