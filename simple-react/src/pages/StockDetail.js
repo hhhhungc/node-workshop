@@ -7,28 +7,27 @@ function Stock(props) {
 
     // table裡資料的初始值
     const [stock, setStock] = useState([]);
+    const [stockName, setStockName] = useState([]);
     // 抓網址上的stock_id，用match要
     const stock_id = props.match.params.stock_id;
 
     useEffect(() => {
-        //     Axios.get("http://localhost:3001/stock/" + 2330).then((res) => {
-        //         // console.log(res.data);
-        //         setStock(res.data);
-        //     });
-
         Axios.get(`http://localhost:3001/stock/${stock_id}`).then((res) => {
             // console.log(res.data);
-            setStock(res.data);
+            setStock(res.data.result);
+            setStockName(res.data.stock);
         });
     }, []);
 
     return (
         <>
             <div className="container">
-                <h1>Stock: {stock_id}</h1>
+                <h1>
+                    Stock: {stock_id} {stockName.stock_name}
+                </h1>
                 <button
                     type="button"
-                    class="btn btn-primary mb-2"
+                    className="btn btn-primary mb-2"
                     onClick={() => {
                         props.history.goBack();
                     }}

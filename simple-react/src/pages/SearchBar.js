@@ -4,6 +4,9 @@ import Axios from "axios";
 function SearchBar(props) {
     // table裡資料的初始值
     const [stock, setStock] = useState([]);
+    const [stockName, setStockName] = useState([]);
+    const [list, setList] = useState([]);
+
     // input的初始值
     const [stockNum, setStockNum] = useState("");
 
@@ -14,8 +17,9 @@ function SearchBar(props) {
         // console.log(searchWord);
 
         Axios.get(`http://localhost:3001/stock/${searchWord}`).then((res) => {
-            // console.log(res.data);
-            setStock(res.data);
+            // console.log(res.data.stock);
+            setStock(res.data.result);
+            setStockName(res.data.stock);
         });
     };
 
@@ -35,7 +39,9 @@ function SearchBar(props) {
                     />
                 </div>
 
-                <h1>Stock: {searchStock ? stockNum : ""}</h1>
+                <h1>
+                    Stock: {searchStock ? stockNum : ""} {stockName.stock_name}
+                </h1>
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>

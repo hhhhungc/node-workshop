@@ -40,7 +40,18 @@ app.get("/stock/:stockCode", async (req, res, next) => {
         "SELECT * FROM stock_price WHERE stock_id=? ORDER BY date DESC",
         [req.params.stockCode]
     );
-    res.json(result);
+    // 再多抓一個table的資料
+    let stock = await connection.queryAsync(
+        "SELECT * FROM stock WHERE stock_id=?",
+        [req.params.stockCode]
+    );
+
+    if (stock.length > 0) {
+        stock = stock[0];
+    }
+    // 要把新增的stock這個table這個資料也輸出
+    res.json({ stock, result });
+    // res.json(result)
 });
 
 // 錯誤的要放在最下面
