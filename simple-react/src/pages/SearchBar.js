@@ -1,40 +1,41 @@
-import React, { useState, useEffect } from "react";
-import { withRouter } from "react-router-dom";
+import React, { useState } from "react";
 import Axios from "axios";
 
-function Stock(props) {
-    // console.log(props);
-
+function SearchBar(props) {
     // table裡資料的初始值
     const [stock, setStock] = useState([]);
-    // 抓網址上的stock_id，用match要
-    const stock_id = props.match.params.stock_id;
+    // input的初始值
+    const [stockNum, setStockNum] = useState("");
 
-    useEffect(() => {
-        //     Axios.get("http://localhost:3001/stock/" + 2330).then((res) => {
-        //         // console.log(res.data);
-        //         setStock(res.data);
-        //     });
+    // input的onChange事件
+    const searchStock = (e) => {
+        const searchWord = e.target.value;
+        setStockNum(searchWord);
+        // console.log(searchWord);
 
-        Axios.get(`http://localhost:3001/stock/${stock_id}`).then((res) => {
+        Axios.get(`http://localhost:3001/stock/${searchWord}`).then((res) => {
             // console.log(res.data);
             setStock(res.data);
         });
-    }, []);
+    };
 
     return (
         <>
             <div className="container">
-                <h1>Stock: {stock_id}</h1>
-                <button
-                    type="button"
-                    class="btn btn-primary mb-2"
-                    onClick={() => {
-                        props.history.goBack();
-                    }}
-                >
-                    回上一頁
-                </button>
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">
+                        請輸入股票代號
+                    </label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="exampleFormControlInput1"
+                        placeholder="請輸入股票代號"
+                        onChange={searchStock}
+                    />
+                </div>
+
+                <h1>Stock: {searchStock ? stockNum : ""}</h1>
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -55,8 +56,8 @@ function Stock(props) {
                             return (
                                 <tr key={i}>
                                     {/* <th>{v.stock_id}</th> */}
-                                    <td className="text-end">{v.date}</td>
-                                    <td className="text-end">{v.open_price}</td>
+                                    <th>{v.date}</th>
+                                    <td>{v.open_price}</td>
                                     <td>{v.high_price}</td>
                                     <td>{v.low_price}</td>
                                     <td>{v.close_price}</td>
@@ -74,4 +75,4 @@ function Stock(props) {
     );
 }
 
-export default withRouter(Stock);
+export default SearchBar;

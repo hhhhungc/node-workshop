@@ -18,7 +18,7 @@ app.use("/about", (req, res, next) => {
 
 // HTTP Method: get, post, put, patch, delete...
 app.get("/", function (req, res, next) {
-    res.send("<h1>Have a good day! Hello!</h1>");
+    res.send("<h1>Have a good day! Hello! 8/26禮拜四</h1>");
 });
 
 app.get("/about", function (req, res, next) {
