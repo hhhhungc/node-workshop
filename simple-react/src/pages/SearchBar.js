@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Axios from "axios";
+import { API_URL } from "../utils/config";
 
 function SearchBar(props) {
     // table裡資料的初始值
     const [stock, setStock] = useState([]);
     const [stockName, setStockName] = useState([]);
-    const [list, setList] = useState([]);
 
     // input的初始值
     const [stockNum, setStockNum] = useState("");
@@ -16,7 +16,7 @@ function SearchBar(props) {
         setStockNum(searchWord);
         // console.log(searchWord);
 
-        Axios.get(`http://localhost:3001/stock/${searchWord}`).then((res) => {
+        Axios.get(`${API_URL}/stock/${searchWord}`).then((res) => {
             // console.log(res.data.stock);
             setStock(res.data.result);
             setStockName(res.data.stock);
@@ -26,13 +26,13 @@ function SearchBar(props) {
     return (
         <>
             <div className="container">
-                <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">
+                <div className="mb-3">
+                    <label htmlFor="exampleFormControlInput1" className="form-label">
                         請輸入股票代號
                     </label>
                     <input
                         type="text"
-                        class="form-control"
+                        className="form-control"
                         id="exampleFormControlInput1"
                         placeholder="請輸入股票代號"
                         onChange={searchStock}

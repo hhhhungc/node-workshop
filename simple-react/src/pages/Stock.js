@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
+import { API_URL } from "../utils/config";
 
 function Stock(props) {
     const [list, setList] = useState([]);
 
     useEffect(() => {
-        Axios.get("http://localhost:3001/stock").then((res) => {
+        // console.log("API_URL ", API_URL);
+
+        Axios.get(`${API_URL}/stock`).then((res) => {
             // console.log(res.data);
             setList(res.data);
         });
