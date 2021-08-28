@@ -22,14 +22,26 @@ function Register() {
         try {
             // /auth/register
             // /auth/login
-            // 不需要上傳檔案的版本
+            // 不需要上傳檔案的版本  
             // Content-Type: application/json
-            let res = await Axios.post(`${API_URL}/auth/register`, {
-                name,
-                email,
-                password,
-                confirmPassword,
-            });
+            // let res = await Axios.post(`${API_URL}/auth/register`, {
+            //     name,
+            //     email,
+            //     password,
+            //     confirmPassword,
+            // });
+            // console.log(res);
+
+            // 需要上傳檔案的版本，透過FormData
+            // Content-Type: multipart/form-data
+            // express需要用到另外的中間件
+            let formData = new FormData();
+            formData.append("name", name);
+            formData.append("email", email);
+            formData.append("password", password);
+            formData.append("confirmPassword", confirmPassword);
+            formData.append("photo", photo);
+            let res = await Axios.post(`${API_URL}/auth/register`, formData);
             console.log(res);
         } catch (e) {
             // 可以用e.response 拿到axios的response
@@ -116,7 +128,6 @@ function Register() {
                                 className="form-control"
                                 id="photo"
                                 name="photo"
-                                value={photo}
                                 onChange={(e) => {
                                     setPhoto(e.target.files[0]);
                                 }}
