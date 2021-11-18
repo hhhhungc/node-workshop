@@ -5,7 +5,7 @@ const router = express.Router();
 // router就是一個在app底下的小app
 // 也是中間件
 const connection = require("../utils/db");
-
+const { loginCheckMiddleware } = require("../middlewares/auth");
 // let app = express();
 // app.use
 // app.get
@@ -26,6 +26,7 @@ router.get("/", async function (req, res, next) {
 
 // 前端告訴後端我在第幾頁，後端給出該頁的資料
 // 後端分頁/stock/2330?page=1
+// loginCheckMiddleware,
 router.get("/:stockCode", async (req, res, next) => {
     // req.params.stockCode
     // req.query.page
@@ -40,28 +41,36 @@ router.get("/:stockCode", async (req, res, next) => {
         [req.params.stockCode]
     );
     // console.log(count);
-    // [ RowDataPacket { total: 36 } ]
+    // [ RowDataPacket { total: 36 } ] --> 取陣列的第0個
     const totalCount = count[0].total;
-    console.log(totalCount);
+    // console.log("總筆數", totalCount);
 
     // 3.總共有幾頁，無條件進位Math.ceil
     const totalPage = Math.ceil(totalCount / perPage);
-    console.log(totalPage);
+    // console.log("總頁數", totalPage);
 
     // 4.取得這頁的資料
     // LIMIT 要取幾筆資料(這一頁要幾筆資料)
     // OFFSET 要跳過多少(跳過perPage)
+    // page 1: 1-10 跳過 0 筆
+    // page 2: 11-20 跳過 10 筆
+    // page 3: 21-30 跳過 10*2筆
+    // offset(page現在第幾頁 - 1) * 一頁幾筆
     let offset = (page - 1) * perPage;
     let result = await connection.queryAsync(
         "SELECT * FROM stock_price WHERE stock_id=? ORDER BY date  LIMIT ? OFFSET ? ",
         [req.params.stockCode, perPage, offset]
     );
+
+    // 5.把分頁相關資訊，寫成一個物件，再跟原本的json一起傳給前端
     let pagination = {
         totalCount, //總共幾筆
         perPage, //一頁幾筆
         totalPage, //總共幾頁(最後一頁)
         page, //目前在第幾頁
     };
+
+    // 最原本，沒有分頁的
     // let result = await connection.queryAsync(
     //     "SELECT * FROM stock_price WHERE stock_id=? ORDER BY date DESC ",
     //     [req.params.stockCode]
@@ -72,7 +81,6 @@ router.get("/:stockCode", async (req, res, next) => {
         "SELECT * FROM stock WHERE stock_id=?",
         [req.params.stockCode]
     );
-
     if (stock.length > 0) {
         stock = stock[0];
     }

@@ -9,14 +9,6 @@ function Register() {
     const [confirmPassword, setConfirmPassword] = useState("tester");
     const [photo, setPhoto] = useState("");
 
-    // const [fields, setFields] = useState({
-    //     email: "ruby@test.com",
-    //     name: "Ruby",
-    //     password: "tester",
-    //     confirmPassword: "tester",
-    //     photo: "",
-    // });
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -47,7 +39,7 @@ function Register() {
             // 可以用e.response 拿到axios的response
             console.error(e.response);
             // 如何顯示這個訊息(UX)
-            alert(e.response.data.message);
+            // alert(e.response.data.message);
         }
     };
     return (

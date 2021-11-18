@@ -38,7 +38,7 @@ function getResponse(stockCode) {
             console.log("此股票代碼有問題，請洽證交所");
         }
         let parsedData = TWSEData(stockCode, stockData.data);
-        // console.log(parsedData);
+        console.log(parsedData);
 
         // 4. 抓回來的資料存到資料庫的 stock_price 表格裡去
         let insertResult = await connection.queryAsync(

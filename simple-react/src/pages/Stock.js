@@ -32,7 +32,7 @@ function Stock(props) {
                                 <tr key={i}>
                                     <th>
                                         <Link
-                                            to={"/stock-detail/" + v.stock_id}
+                                            to={"/stock/" + v.stock_id}
                                         >
                                             {v.stock_id}
                                         </Link>

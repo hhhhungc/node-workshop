@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useParams } from "react";
-import { withRouter } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useHistory } from "react-router-dom";
 import Axios from "axios";
 import { API_URL } from "../utils/config";
 import { Pagination, Button } from "react-bootstrap";
@@ -7,19 +7,21 @@ import { Pagination, Button } from "react-bootstrap";
 function Stock(props) {
     // console.log(props);
     // 抓網址上的stock_id，用match要
-    const stock_id = props.match.params.stock_id;
+    // const stock_id = props.match.params.stock_id;
 
     // useParams抓這個參數，抓到會是字串
-    // const { currentPage } = useParams();
-
+    const { stock_id, currentPage } = useParams();
+    
     // table裡資料的初始值
     const [stock, setStock] = useState([]);
     const [stockName, setStockName] = useState([]);
 
     // 分頁屬性
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(parseInt(currentPage) || 1);
     // 總共有幾頁
     const [totalPage, setTotalPage] = useState(0);
+
+    const history = useHistory();
 
     // let active = page;
     let pages = [];
@@ -28,7 +30,7 @@ function Stock(props) {
             <Pagination.Item
                 key={i}
                 active={i === page}
-                onClick={() => {
+                onClick={(e) => {
                     setPage(i);
                 }}
             >
@@ -55,15 +57,29 @@ function Stock(props) {
     // };
 
     useEffect(() => {
-        Axios.get(`${API_URL}/stock/${stock_id}/?page=${page}`).then((res) => {
-            // console.log(res.data);
-            setStock(res.data.result);
-            setStockName(res.data.stock);
+        const getStockData = async () => {
+            try {
+                let res = await Axios.get(
+                    `${API_URL}/stock/${stock_id}/?page=${page}`,
+                    {
+                        withCredentials: true,
+                    }
+                );
+                // console.log(res.data);
+                setStock(res.data.result);
+                setStockName(res.data.stock);
 
-            //設定分頁
-            setTotalPage(res.data.pagination.totalPage);
-        });
+                //設定分頁
+                setTotalPage(res.data.pagination.totalPage);
+                history.push(`/stock/${stock_id}/${page}`);
+            } catch (e) {
+                console.log(e);
+            }
+        };
+        getStockData();
     }, [page]);
+    // [] --> 只有第一次render的時候才觸發
+    // [page] --> page變的時候 --> render --> 這個effect被觸發
 
     return (
         <>
@@ -123,4 +139,4 @@ function Stock(props) {
     );
 }
 
-export default withRouter(Stock);
+export default Stock;
